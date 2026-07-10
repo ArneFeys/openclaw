@@ -27,6 +27,7 @@ import {
   type ResolvedGatewayAuth,
 } from "./auth.js";
 import { CANVAS_CAPABILITY_TTL_MS, normalizeCanvasScopedUrl } from "./canvas-capability.js";
+import { handleConfigGetHttpRequest } from "./config-http.js";
 import {
   handleControlUiAvatarRequest,
   handleControlUiHttpRequest,
@@ -511,6 +512,15 @@ export function createGatewayHttpServer(opts: {
       }
       if (
         await handleToolsInvokeHttpRequest(req, res, {
+          auth: resolvedAuth,
+          trustedProxies,
+          rateLimiter,
+        })
+      ) {
+        return;
+      }
+      if (
+        await handleConfigGetHttpRequest(req, res, {
           auth: resolvedAuth,
           trustedProxies,
           rateLimiter,
